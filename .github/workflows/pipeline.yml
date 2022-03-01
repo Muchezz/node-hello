@@ -8,7 +8,7 @@ on:
 
 env: 
   AWS_REGION: us-west-2
-  ECR_REPOSITORY: kubernetes-node-app
+  ecr-repo: ${{ secrets.ECR_REPOSITORY }}
 
 jobs:
   deploy:
@@ -27,11 +27,11 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
 
-    - name: Create ECR repo if necessary
-      id: ecr-repo
-      uses: @2iq/aws-ecr-create-repository@v1
-      with:
-        ecr-name: $${{ env.ECR_REPOSITORY }}
+    # - name: Create ECR repo if necessary
+    #   id: ecr-repo
+    #   uses: @2iq/aws-ecr-create-repository@v1
+    #   with:
+    #     ecr-name: $${{ env.ECR_REPOSITORY }}
 
     - name: Login to Amazon ECR
       id: login-ecr
