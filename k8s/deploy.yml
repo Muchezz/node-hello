@@ -18,7 +18,7 @@ spec:
     type: RollingUpdate
   bastion:
     enabled: true
-     
+
   template:
     metadata:
       labels:
@@ -38,7 +38,7 @@ spec:
       
     containers:
     - name: kubernetes-node-app
-      image: 910756530301.dkr.ecr.us-west-2.amazonaws.com/kubernetes-node-app
+      image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       imagePullPolicy: Always
       ports:
       - containerPort: 3000
