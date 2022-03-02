@@ -56,12 +56,12 @@ jobs:
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    name: Deploy an EKS to cluster
+  # deploy:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   name: Deploy an EKS to cluster
     
-    steps:
+  #   steps:
     - name: install eksctl 
       # uses: actions/checkout@v2
       run: |
@@ -89,9 +89,9 @@ jobs:
       id: setup-kubeconfig
       env:
         EKS_CLUSTER_NAME: ferocious-sheepdog-1646205979
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ${{ env.AWS_REGION }}
+        # aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        # aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        # aws-region: ${{ env.AWS_REGION }}
       run: |
         aws eks --region $AWS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
 
