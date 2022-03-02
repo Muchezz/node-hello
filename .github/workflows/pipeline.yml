@@ -83,7 +83,7 @@ jobs:
     - name: Configure AWS credentials
       id: create-cluster
       run: |
-        eksctl create cluster -f k8s/create-cluster.yml
+        eksctl create cluster -f create-cluster.yml
 
     - name: Setup kubeconfig
       id: setup-kubeconfig
