@@ -22,7 +22,7 @@ spec:
         app: kubernetes-node-app
     spec:
       containers:
-        - image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        - image: repo-image
           imagePullPolicy: Always
           name: kubernetes-node-app
           ports:

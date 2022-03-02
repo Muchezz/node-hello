@@ -105,7 +105,7 @@ jobs:
         cd $K8S_YAML_DIR
         curl -s -o kustomize --location https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
         chmod u+x ./kustomize
-        ./kustomize edit set image example-eks=$IMAGE_NAME
+        ./kustomize edit set image repo-image=$IMAGE_NAME
         ./kustomize build . | kubectl apply -f -
         # Verify deployment
         kubectl rollout status deployment/kubernetes-node-app
