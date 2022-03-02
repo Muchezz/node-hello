@@ -34,7 +34,7 @@ jobs:
       with:
         repository: ${{ secrets.REPO }}
         # lifecycle-policy: config/lifecycle-policy.json
-        public: true
+        # public: true
 
     - name: Login to Amazon ECR
       id: login-ecr
