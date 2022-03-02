@@ -80,15 +80,15 @@ jobs:
             $SUDO mv eksctl_download/eksctl /usr/local/bin/
             rmdir eksctl_download
 
-    - name: Configure AWS credentials
-      id: create-cluster
-      run: |
-        eksctl create cluster -f cluster.yaml
+    # - name: Create Cluster
+    #   id: create-cluster
+    #   run: |
+    #     eksctl create cluster -f cluster.yaml
 
     - name: Setup kubeconfig
       id: setup-kubeconfig
       env:
-        EKS_CLUSTER_NAME: ${{ steps.create-cluster.outputs.registry }}
+        EKS_CLUSTER_NAME: ferocious-sheepdog-1646205979
       run: |
         aws eks --region $AWS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
 

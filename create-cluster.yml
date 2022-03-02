@@ -10,7 +10,7 @@ managedNodeGroups:
     minSize: 2
     maxSize: 4
     desiredCapacity: 3
-    instanceType: ["t3.small", "t3.medium"]
+    instanceType: "t3.medium"
     volumeSize: 5
     privateNetworking: true
     spot: true
