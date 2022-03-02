@@ -88,7 +88,7 @@ jobs:
     - name: Setup kubeconfig
       id: setup-kubeconfig
       env:
-        EKS_CLUSTER_NAME: ${{ steps.create-cluster.outputs.registry }}
+        EKS_CLUSTER_NAME: kubernetes-node-app
         # aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         # aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         # aws-region: ${{ env.AWS_REGION }}
@@ -200,32 +200,3 @@ jobs:
 
 
 
-
-
-
-    # - name: Install and configure kubectl
-    #   # uses: actions/checkout@v2
-    #   run: |
-    #     chmod +x make.sh
-    #     make install-eksctl
-    #     VERSION=$(curl --silent https://storage.googleapis.com/kubernetes-release/release/stable.txt)
-    #     curl https://storage.googleapis.com/kubernetes-release/release/$VERSION/bin/linux/amd64/kubectl \
-    #       --progress-bar \
-    #       --location \
-    #       --remote-name
-    #     chmod +x kubectl
-    #     sudo mv kubectl /usr/local/bin/
-    #     echo ${{ secrets.KUBECONFIG }} | base64 --decode > kubeconfig.yaml
-
-    # - name: Deploy to EKS
-    #   uses: actions/checkout@v2
-    #   env:
-    #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-    #     run: |
-    #       chmod +x make.sh
-    #       make cluster-create
-    #       export ECR_REPOSITORY=${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}
-    #       export IMAGE_TAG=${{ github.sha }}
-    #       export KUBECONFIG=kubeconfig.yaml
-    #       envsubst < k8s/kustomization.tmpl.yaml > k8s/kustomization.yaml
-    #       kubectl kustomize k8s | kubectl apply -f -
