@@ -2,15 +2,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: aws-example-octodex
+  name: kubernetes-node-app
   namespace: development
   labels:
-    app: aws-example-octodex
+    app: kubernetes-node-app
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: aws-example-octodex
+      app: kubernetes-node-app
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -19,12 +19,12 @@ spec:
   template:
     metadata:
       labels:
-        app: aws-example-octodex
+        app: kubernetes-node-app
     spec:
       containers:
         - image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           imagePullPolicy: Always
-          name: aws-example-octodex
+          name: kubernetes-node-app
           ports:
             - containerPort: 3000
 
@@ -32,14 +32,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-    name: aws-example-octodex
+    name: kubernetes-node-app
     namespace: development
     labels:
-        app: aws-example-octodex
+        app: kubernetes-node-app
 spec:
     type: LoadBalancer
     selector:
-        app: aws-example-octodex
+        app: kubernetes-node-app
     ports:
     - port: 80
       protocol: TCP  
