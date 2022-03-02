@@ -16,7 +16,7 @@ managedNodeGroups:
     spot: true
     ssh:
       allow: true
-      publicKeyPath: muchezz-key
+      publicKeyPath: muchezz
     labels: {env: dev}
     tags:
       costid: devops
