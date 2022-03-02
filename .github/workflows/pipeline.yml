@@ -8,6 +8,7 @@ on:
 
 env: 
   AWS_REGION: us-west-2
+  ECR_REPOSITORY: ${{ secrets.REPO }}
   
 
 jobs:
@@ -28,10 +29,10 @@ jobs:
         aws-region: ${{ env.AWS_REGION }}
 
     - name: Create ECR repo if necessary
-      id: ecr-repo
+      id: ECR_REPOSITORY
       uses: int128/create-ecr-repository-action@v1
       with:
-        ecr-name: $${{ env.ECR_REPOSITORY }}
+        ECR_REPOSITORY: ${{ secrets.REPO }}
         lifecycle-policy: config/lifecycle-policy.json
 
     - name: Login to Amazon ECR
