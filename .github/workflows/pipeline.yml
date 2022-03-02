@@ -65,7 +65,7 @@ jobs:
     - name: install eksctl 
       # uses: actions/checkout@v2
       run: |
-        make install-eksctl
+        make install
 
     - name: Configure AWS credentials
       id: create-cluster
