@@ -108,7 +108,7 @@ jobs:
         ./kustomize edit set image repo-image=$IMAGE_NAME
         ./kustomize build . | kubectl apply -f - 
         # Verify deployment
-        kubectl rollout status deployment/kubernetes-node-app
+        kubectl rollout status deployment/kubernetes-node-app --namespace development
         # List Public IP of cluster
         kubectl get services -o wide
         kubectl get ingress
