@@ -48,12 +48,15 @@ jobs:
         # Build a docker container and
         # push it to ECR so that it can
         # be deployed to ECS.
+        cd app
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
        
     - name: Install and configure kubectl
+      uses: actions/checkout@v2
       run: |
+        make install-eksctl
         VERSION=$(curl --silent https://storage.googleapis.com/kubernetes-release/release/stable.txt)
         curl https://storage.googleapis.com/kubernetes-release/release/$VERSION/bin/linux/amd64/kubectl \
           --progress-bar \
@@ -64,6 +67,7 @@ jobs:
         echo ${{ secrets.KUBECONFIG }} | base64 --decode > kubeconfig.yaml
 
     - name: Deploy to EKS
+      uses: actions/checkout@v2
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
