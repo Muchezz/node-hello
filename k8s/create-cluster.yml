@@ -16,7 +16,7 @@ managedNodeGroups:
     spot: true
     ssh:
       allow: true
-      publicKeyPath: ~/.ssh/id_ed25519.pub
+      publicKeyPath: ~/.ssh/id_rsa.pub
     labels: {env: dev}
     tags:
       costid: devops
