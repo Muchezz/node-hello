@@ -65,23 +65,20 @@ jobs:
     - name: install eksctl 
       # uses: actions/checkout@v2
       run: |
-        if [[ -z $(which eksctl) ]]
-        then
-            install eksctl
-            warn warn sudo is required
-            sudo wget -q -O - https://api.github.com/repos/weaveworks/eksctl/releases \
-                | jq --raw-output 'map( select(.prerelease==false) | .assets[].browser_download_url ) | .[]' \
-                | grep inux \
-                | head -n 1 \
-                | wget -q --show-progress -i - -O - \
-                | sudo tar -xz -C /usr/local/bin
-
-            # bash completion
-            [[ -z $(grep eksctl_init_completion ~/.bash_completion 2>/dev/null) ]] \
-                && eksctl completion bash >> ~/.bash_completion
-        else
-            log skip eksctl already installed
-        fi
+        if which eksctl > /dev/null; then
+              echo "eksctl is already installed"
+              exit 0
+            fi
+            mkdir -p eksctl_download
+            curl --silent --location --retry 5 "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" \
+              | tar xz -C eksctl_download
+            chmod +x eksctl_download/eksctl
+            SUDO=""
+            if [ $(id -u) -ne 0 ] && which sudo > /dev/null ; then
+              SUDO="sudo"
+            fi
+            $SUDO mv eksctl_download/eksctl /usr/local/bin/
+            rmdir eksctl_download
 
     - name: Configure AWS credentials
       id: create-cluster
