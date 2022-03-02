@@ -13,7 +13,7 @@ env:
 
 jobs:
   build:
-    name: build And push to ECR 
+    name: build and push to ECR 
     runs-on: ubuntu-latest
     environment: production
 
@@ -29,7 +29,7 @@ jobs:
         aws-region: ${{ env.AWS_REGION }}
 
     - name: Create ECR repo if necessary
-      id: ECR_REPOSITORY
+      id: ecr-repo
       uses: int128/create-ecr-repository-action@v1
       with:
         repository: ${{ secrets.REPO }}
@@ -54,30 +54,162 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-       
-    - name: Install and configure kubectl
-      # uses: actions/checkout@v2
+
+
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy an EKS to cluster
+    
+    steps:
+    - name: install eksctl 
+      uses: actions/checkout@v2
       run: |
         chmod +x make.sh
         make install-eksctl
-        VERSION=$(curl --silent https://storage.googleapis.com/kubernetes-release/release/stable.txt)
-        curl https://storage.googleapis.com/kubernetes-release/release/$VERSION/bin/linux/amd64/kubectl \
-          --progress-bar \
-          --location \
-          --remote-name
-        chmod +x kubectl
-        sudo mv kubectl /usr/local/bin/
-        echo ${{ secrets.KUBECONFIG }} | base64 --decode > kubeconfig.yaml
 
-    - name: Deploy to EKS
-      uses: actions/checkout@v2
+    - name: Configure AWS credentials
+      id: create-cluster
+      run: |
+        eksctl create cluster -f k8s/create-cluster.yml
+
+    - name: Setup kubeconfig
+      id: setup-kubeconfig
       env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        run: |
-          chmod +x make.sh
-          make cluster-create
-          export ECR_REPOSITORY=${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}
-          export IMAGE_TAG=${{ github.sha }}
-          export KUBECONFIG=kubeconfig.yaml
-          envsubst < k8s/kustomization.tmpl.yaml > k8s/kustomization.yaml
-          kubectl kustomize k8s | kubectl apply -f -
+        EKS_CLUSTER_NAME: ${{ steps.create-cluster.outputs.registry }}
+      run: |
+        aws eks --region $AWS_REGION update-kubeconfig --name $EKS_CLUSTER_NAME
+
+    - name: Deploy k8s yaml
+      id: deploy-k8s-yaml
+      env:
+        K8S_YAML_DIR: ./k8s
+        IMAGE_NAME: ${{ steps.build-image.outputs.image }}
+      run: |
+        # Setup kustomize
+        cd $K8S_YAML_DIR
+        curl -s -o kustomize --location https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
+        chmod u+x ./kustomize
+        ./kustomize edit set image example-eks=$IMAGE_NAME
+        ./kustomize build . | kubectl apply -f -
+        # Verify deployment
+        kubectl rollout status deployment/aws-example-octodex
+        # List Public IP of cluster
+        kubectl get services -o wide
+        kubectl get ingress
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # - name: Install and configure kubectl
+    #   # uses: actions/checkout@v2
+    #   run: |
+    #     chmod +x make.sh
+    #     make install-eksctl
+    #     VERSION=$(curl --silent https://storage.googleapis.com/kubernetes-release/release/stable.txt)
+    #     curl https://storage.googleapis.com/kubernetes-release/release/$VERSION/bin/linux/amd64/kubectl \
+    #       --progress-bar \
+    #       --location \
+    #       --remote-name
+    #     chmod +x kubectl
+    #     sudo mv kubectl /usr/local/bin/
+    #     echo ${{ secrets.KUBECONFIG }} | base64 --decode > kubeconfig.yaml
+
+    # - name: Deploy to EKS
+    #   uses: actions/checkout@v2
+    #   env:
+    #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+    #     run: |
+    #       chmod +x make.sh
+    #       make cluster-create
+    #       export ECR_REPOSITORY=${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}
+    #       export IMAGE_TAG=${{ github.sha }}
+    #       export KUBECONFIG=kubeconfig.yaml
+    #       envsubst < k8s/kustomization.tmpl.yaml > k8s/kustomization.yaml
+    #       kubectl kustomize k8s | kubectl apply -f -
