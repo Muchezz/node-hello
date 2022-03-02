@@ -65,7 +65,6 @@ jobs:
     - name: install eksctl 
       # uses: actions/checkout@v2
       run: |
-        chmod +x ./make.sh
         make install-eksctl
 
     - name: Configure AWS credentials

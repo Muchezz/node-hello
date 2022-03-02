@@ -1,6 +1,7 @@
 .SILENT:
 
 install-eksctl : # install eksctl
+	chmod +x ./make.sh
 	./make.sh install-eksctl
 
 cluster-create: # create the EKS cluster
