@@ -67,7 +67,7 @@ jobs:
       run: |
         if [[ -z $(which eksctl) ]]
         then
-            log install eksctl
+            install eksctl
             warn warn sudo is required
             sudo wget -q -O - https://api.github.com/repos/weaveworks/eksctl/releases \
                 | jq --raw-output 'map( select(.prerelease==false) | .assets[].browser_download_url ) | .[]' \
