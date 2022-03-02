@@ -106,9 +106,9 @@ jobs:
         curl -s -o kustomize --location https://github.com/kubernetes-sigs/kustomize/releases/download/v3.1.0/kustomize_3.1.0_linux_amd64
         chmod u+x ./kustomize
         ./kustomize edit set image repo-image=$IMAGE_NAME
-        ./kustomize build . | kubectl apply -f -
+        ./kustomize build . | kubectl apply -f - 
         # Verify deployment
-        kubectl rollout status deployments/kubernetes-node-app
+        kubectl rollout status deployment/kubernetes-node-app
         # List Public IP of cluster
         kubectl get services -o wide
         kubectl get ingress

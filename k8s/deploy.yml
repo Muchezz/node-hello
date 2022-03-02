@@ -25,7 +25,6 @@ spec:
       - name: kubernetes-node-app
         image: repo-image
         imagePullPolicy: Always
-        # name: kubernetes-node-app
         ports:
         - containerPort: 3000
         resources:
